@@ -5,7 +5,12 @@
       <div class="flex flex-col gap-4 w-[25rem]">
         <div>
           <span class="font-medium block mb-2">{{ selectedItem.title }}</span>
-          <img :src="selectedItem.image" :alt="selectedItem.title" class="w-full mb-2" />
+          <img
+            :src="getImageUrl(selectedItem.image)"
+            :alt="selectedItem.title"
+            class="w-full mb-2"
+            @error="handleImageError"
+          />
           <InputGroup>
             <InputText :value="selectedItem.link" readonly class="w-full"></InputText>
             <InputGroupAddon>
@@ -57,6 +62,21 @@ const openLink = () => {
   if (selectedItem.value.link) {
     window.open(selectedItem.value.link, '_blank')
   }
+}
+
+const getImageUrl = (url: string) => {
+  if (url.includes('googleusercontent.com') && url.includes('fife')) {
+    const fileId = url.split('/').pop()?.split('=').pop()
+    return `https://drive.google.com/uc?export=view&id=${fileId}`
+  }
+  return url
+}
+
+const handleImageError = (event: Event) => {
+  const img = event.target as HTMLImageElement
+  console.error('Failed to load image:', img.src)
+  // You could set a fallback image here if needed
+  // img.src = 'path/to/fallback/image.jpg';
 }
 
 const showPopover = (event: MouseEvent) => {
