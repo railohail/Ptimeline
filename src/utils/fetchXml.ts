@@ -1,22 +1,11 @@
 // utils/fetchXml.ts
 
-const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/'
-
-export async function fetchXmlFile(
-  filename: string,
-  useCorsProxy: boolean = false
-): Promise<string> {
+export async function fetchXmlFile(filename: string): Promise<string> {
   try {
-    let url = filename
-    if (useCorsProxy && !filename.startsWith('http')) {
-      console.warn(
-        'CORS proxy is meant to be used with remote URLs. Ignoring proxy for local file.'
-      )
-    } else if (useCorsProxy) {
-      url = `${CORS_PROXY}${filename}`
-    }
-
-    const response = await fetch(url)
+    const response = await fetch(filename, {
+      credentials: 'include', // This line is added
+      mode: 'cors' // This line is added
+    })
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
